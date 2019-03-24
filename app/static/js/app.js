@@ -85,6 +85,7 @@ $(document).ready(function () {
                     joined_channels.includes(data.open_channels[i]) ? displayChannelBtn(data.open_channels[i], true) : displayChannelBtn(data.open_channels[i], false);
                 }
             }
+            
         });
 
         /**
@@ -401,21 +402,6 @@ $(document).ready(function () {
                 </div>
             `);
 
-<<<<<<< HEAD
-=======
-        if(typeof data === 'string' && $(`a[id^='flacker-']`).length === 0) {
-            socket.on('load_messages', data => {
-            let storedChannels = Object.keys(data.messages);
-            // Load saved messages from the server.
-            if (storedChannels.includes(channel)) {
-                for (let j = 0; j < data.messages[channel].length; j++) {
-                    displayMessage(data.messages[channel][j]);
-                }
-            }
-        });
-        }
-
->>>>>>> a9f657ccc1a16dd00587491844f13395bd292560
     };
 
 

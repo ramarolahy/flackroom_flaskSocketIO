@@ -13,11 +13,7 @@ server_timestamp = datetime.now().strftime("%H:%M, %m/%d/%Y")
 # global variable to store messages
 message_history = {
     '#main': [{
-<<<<<<< HEAD
                   'body': 'Welcome to flackroom!', 'sender_sid': 'falckbot001', 'sender_name': 'flackbot',
-=======
-                  'body'     : 'Welcome to flackroom!', 'sender_sid': 'falckbot001', 'sender_name': 'flackbot',
->>>>>>> a9f657ccc1a16dd00587491844f13395bd292560
                   'timestamp': server_timestamp, 'recipient_name': 'superflacker', 'channel': '#main'
               }]
 }
@@ -55,17 +51,11 @@ def init_room(data):
 
 @socketio.on('get_messages')
 def load_messages(data):
-<<<<<<< HEAD
     print('get messages')
     # Method to get stored messages and respond with message payload
     # Takes empty object from client side and loads in messages
     messages = data['messages']
     channel = data['channel']
-=======
-    # Method to get stored messages and respond with message payload
-    # Takes empty object from client side and loads in messages
-    loaded_messages = data['messages']
->>>>>>> a9f657ccc1a16dd00587491844f13395bd292560
     if not is_empty(message_history):
         messages = message_history
     emit('load_messages', {'messages': messages, 'channel': channel})
@@ -115,11 +105,7 @@ def private_message(data):
     timestamp = str(server_timestamp)
     join_room(recipient_sid)
     # Save message
-<<<<<<< HEAD
     message = {'body': body, 'sender_sid': sender_sid, 'sender_name': sender_name, 'timestamp': timestamp,
-=======
-    message = {'body'          : body, 'sender_sid': sender_sid, 'sender_name': sender_name, 'timestamp': timestamp,
->>>>>>> a9f657ccc1a16dd00587491844f13395bd292560
                'recipient_name': recipient_name, 'recipient_sid': recipient_sid
     }
     print('Private message: ' + str(message))
