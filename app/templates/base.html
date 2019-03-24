@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+     {% include './includes/head.html' %}
+</head>
+<body class="pt-5">
+
+<div class="container pt-5">
+    <!-- Insert body -->
+    {% block body %}
+    {% endblock %}
+</div>
+
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

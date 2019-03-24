@@ -1,0 +1,92 @@
+{% extends "/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <div id="wrap__main" class="mt-5 px-0 py-0">
+        <div id="wrap__Join-Channel">
+            {# JoinPannel: slides down when user joins flackroom #}
+            <div id="JoinPanel" class=" slideout-panel card px-4 pt-3 pb-2">
+                <div class="row">
+                    <div class="col-12 center">
+                        <form id="register-form" class="form-inline ml-auto mr-auto" role="form" method="POST">
+                            <div class="input-group">
+                                <label class="text-white" id="label__username" for="username">Enter flackroom</label>
+                                <div class="input-group-prepend ml-5">
+                                    <span class="input-group-text" id="basic-addon2">@</span>
+                                </div>
+                                <input id="flackername" name="flackername" class="form-control" placeholder="flacktag"
+                                       aria-label="flackername"
+                                       aria-describedby="basic-addon1" autocomplete="off" required>
+                                <input class="btn btn-default ml-3" id="enter" name="enter" type="submit"
+                                       value="Enter">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {# Appeares when flacker enters room #}
+            <div id="ChannelPanel" class=" slideout-panel card px-4 pt-3 pb-2">
+                <div class="row">
+                    <div class="col-3">
+                        <a class="avatar">
+                            <img id="current_flacker__avatar" class="mr-2"
+                                 src="{{ url_for('static', filename='img/user.svg') }}" alt="avatar">
+                        </a>
+                        {# Insert current_flacker val() from #flackername #}
+                        <span id="current_flacker" class="text-white"></span>
+                    </div>
+                    <div class="col-2">
+                        <form id="channel-form" class="form-inline mx-auto">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">#</span>
+                                </div>
+                                <input id="name" type="text" class="form-control" placeholder="New channel"
+                                       aria-label="channelName"
+                                       aria-describedby="basic-addon1" autocomplete="off" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-7">
+                        <div id="channelList" class="px-0">
+                            {# The main channel is joined by default and cannot be left #}
+                            <button id="channel-link-main" data-channel="main" type="button"
+                                    class="btn mx-1 channel-joined" disabled>#main
+                            </button>
+                            {# Add additional channels here #}
+
+                        </div>
+                    </div>
+                </div>
+                <div id="channel-menu"></div>
+            </div>
+        </div>
+        {# START MESSAGES PANEL #}
+        <div class="row panel_chat py-2 px-2">
+            {# CURTAIN OVERLAY #}
+            <div id="overlay" class="overlay">
+                <img src="{{ url_for('static', filename='img/flack-logo.svg') }}" width="500"
+                     id="flack-logo" class="py-auto" alt="flack_logo">
+            </div>
+            {# TABS #}
+            <div id="wrap__tabs-list" class="col-3 py-2 px-1">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    {# INSERT TABS HERE #}
+                </div>
+
+            </div>
+            {# MESSGAGES #}
+            <div class="col-9 wrap__message-list px-0">
+                <div class="tab-content px-3" id="v-pills-tabContent">
+                    {# Start Tabpanels #}
+
+                    {# INSERT NEW PANNEL HERE #}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block script %}
+    {% endblock %}
+{% endblock %}
