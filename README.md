@@ -65,7 +65,7 @@ See requirements.txt
 <h3>Other notes</h3>
 + Local storage is used to store flackername and channels joined by the user, so using two different browsers for testing
 is ideal (eg Chrome and Opera)
-+
++ As authentication is not enabled, please make sure to use the same username.
 
 
 

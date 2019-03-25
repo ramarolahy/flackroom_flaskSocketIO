@@ -457,7 +457,7 @@ $(document).ready(function () {
         $('#register-form').submit(evt => {
                 evt.preventDefault();
                 if ($('#flackername').val() !== '') {
-                    current_flacker = $('#flackername').val();
+                    current_flacker = $('#flackername').val().toLowerCase();
 
                     // Call init_room function from server
                     socket.emit('init_room', {'open_channels': '', 'current_flackers': []});
