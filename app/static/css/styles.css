@@ -164,39 +164,21 @@ div.content.room-activity {
 }
 
 span.room-activity {
-    display: inline-block;
+    display: block;
+    width: 100%;
     position: relative;
     margin-left: 20px;
     margin-right: 20px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 100px;
 }
 
-span.room-joined:before {
-    content:"";
-    display: inline-block;
-    height: 1em;
-    vertical-align: bottom;
-    margin-right: 20px;
-    width: 200px;
-    border-top: 2px solid rgba(28, 109, 116, 0.51);
-}
-span.room-joined:after{
-    content:"";
-    display: inline-block;
-    height: 1em;
-    vertical-align: bottom;
-    margin-left: 20px;
-    width: 200px;
-    border-top: 2px solid rgba(28, 109, 116, 0.51);
+span.room-joined {
+    color: cornflowerblue;
 }
 
-
-span.room-left:before, span.room-left:after{
-    content:"";
-    display: inline-block;
-    height: 1em;
-    vertical-align: bottom;
-    width: 200px;
-    border-top: 2px solid rgba(116, 0, 34, 0.51);
+span.room-left {
+    color: coral;
 }
 
 
@@ -358,14 +340,14 @@ i.fa-ellipsis-v {
 #JoinPannel {
     position: relative;
     z-index: 1;
-    bottom: 0;
+    bottom: 5;
 }
 
 #ChannelPanel {
     width: 100%;
     z-index: 0;
     position: relative;
-    bottom: 0;
+    bottom: 5;
     display: none;
 
 }

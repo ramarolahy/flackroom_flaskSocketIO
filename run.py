@@ -46,13 +46,6 @@ def get_flacker(data):
     emit('logged_in', flacker, broadcast=True)
 
 
-@socketio.on('logout_flacker')
-def on_login(data):
-    print('logout')
-    flacker_sid = data['flacker_sid']
-    emit('remove_user', {'flacker_sid': flacker_sid}, broadcast=True)
-
-
 @socketio.on('init_room')
 def init_room(data):
     # Method to get stored messages and respond with message payload
@@ -113,12 +106,11 @@ def get_sid(data):
     sender_name = data['sender_name']
     sender_sid = data['sender_sid']
     emit('start_private_message', {
-                'recipient_name': recipient_name,
-                'recipient_sid': recipient_sid,
-                'sender_name': sender_name,
-                'sender_sid': sender_sid
-            })
-
+        'recipient_name': recipient_name,
+        'recipient_sid' : recipient_sid,
+        'sender_name'   : sender_name,
+        'sender_sid'    : sender_sid
+    })
 
 
 @socketio.on('Private message')
@@ -132,14 +124,15 @@ def private_message(data):
     sender_name = data['sender_name']
     # save timestamp as a string to be able to save it
     timestamp = str(server_timestamp)
-    join_room(recipient_sid)
+    room = flackers[recipient_name]['flacker_sid']
+    join_room(room)
     # Save message
     message = {
         'body'          : body, 'sender_sid': sender_sid, 'sender_name': sender_name, 'timestamp': timestamp,
         'recipient_name': recipient_name, 'recipient_sid': recipient_sid
     }
     print('Private message: ' + str(message))
-    emit('Display private message', message, room=recipient_sid, broadcast=True)
+    emit('Display private message', message, room=room, broadcast=True)
 
 
 @socketio.on('Create channel')

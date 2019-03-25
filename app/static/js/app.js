@@ -142,15 +142,6 @@ $(document).ready(function () {
     });
 
 
-    socket.on('disconnect', () => {
-        socket.emit('logout_flacker', {'flacker_sid': flacker_sid})
-    });
-
-
-    socket.on('remove_user', data => {
-        $(`#wrap__flackers`).find($(`#flacker-${data.flacker_sid}-link`)).remove()
-    });
-
     /**
      * Set up the socket to send message payload
      * Calls the onclickSendMessage method after identifying the current
@@ -176,6 +167,9 @@ $(document).ready(function () {
 
     });
 
+    /**
+     *  -> Receives the response from get messages
+     */
     socket.on('load_messages', data => {
         let channels = Object.keys(data.messages);
         let channel = `#${data.channel}`;
@@ -189,6 +183,10 @@ $(document).ready(function () {
         }
     });
 
+    /**
+     *  -> Receives response from get_recipient_sid and opens
+     *  private channel on the recipient ent
+     */
     socket.on ('start_private_message', data => {
         if ((flacker_sid !== data.recipient_sid) && ($(`#v-pills-${data.recipient_sid}`).length === 0)) {
                 // Display channel tab and panel
@@ -278,11 +276,11 @@ $(document).ready(function () {
 
         $(`#list_messages-${channel}`).append(
             `
-                <div class="comment">
-                    <div class="content room-activity pl-3 py-1">
-                        <div class="text" >
-                            <p class="text-center ">
-                            <span class="room-activity  room-joined">@${data.username} joined the room</span>
+                <div class="comment px-0">
+                    <div class="content room-activity pl-3 py-1 px-0">
+                        <div class="text px-0" >
+                            <p class="px-0">
+                            <span class="room-activity room-joined pl-5">@${data.username} joined the room</span>
                             </p>
                         </div>
                     </div>
@@ -297,11 +295,11 @@ $(document).ready(function () {
         let channel = (data.channel.charAt(0) === '#') ? data.channel.substr(1) : data.channel;
         $(`#list_messages-${channel}`).append(
             `
-                <div class="comment">
-                    <div class="content room-activity pl-3 py-1">
-                        <div class="text" >
-                            <p class="text-center">
-                            <span class="room-activity  room-left">@${data.username} left the room</span>
+                <div class="comment px-0">
+                    <div class="content room-activity pl-3 py-1 px-0">
+                        <div class="text px-0" >
+                            <p class="px-0">
+                            <span class="room-activity room-left pl-5">@${data.username} left the room</span>
                             </p>
                         </div>
                     </div>
@@ -317,7 +315,10 @@ $(document).ready(function () {
      /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 //   ~~~~~~  DISPLAY HANDLERS  ~~~~~~ //
-
+    /**
+     * Method to display flacker name
+      * @param data
+     */
     const displayFlacker = data => {
         if ($(`a[data-name^=${data.flacker_name}]`).length === 0) {
             $(`#wrap__flackers`).append(`
@@ -545,7 +546,7 @@ $(document).ready(function () {
      * @param user
      * @returns {*|jQuery}
      */
-    const onclickChannelBtn = (channelName, user = 'superFlacker') => {
+    const onclickChannelBtn = (channelName, user = current_flacker) => {
         let channel = (channelName.charAt(0) === '#') ? channelName.substr(1) : channelName;
 
         return $(`#channel-link-${channel}`).unbind().click(evt => {
@@ -629,7 +630,7 @@ $(document).ready(function () {
      * @param isRecipient: boolean
      * @returns {*|jQuery}
      */
-    const onclickLeaveChannel = (data, user = 'superFlacker', isPrivate = false, isRecipient = false) => {
+    const onclickLeaveChannel = (data, user = current_flacker, isPrivate = false, isRecipient = false) => {
         let channel;
         // initFlackroom() gets a list of opened channels (string) from the server so check if data is string
         // Once session is started, displayChannelRoom takes data objects.
