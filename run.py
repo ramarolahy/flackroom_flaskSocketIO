@@ -58,7 +58,6 @@ def init_room(data):
 
 @socketio.on('get_messages')
 def load_messages(data):
-    print('get messages')
     # Method to get stored messages and respond with message payload
     # Takes empty object from client side and loads in messages
     messages = data['messages']
@@ -101,6 +100,7 @@ def send_message(data):
 
 @socketio.on('get_recipient_sid')
 def get_sid(data):
+    # Method to start private messages
     recipient_name = data['recipient_name']
     recipient_sid = flackers[recipient_name]['flacker_sid']
     sender_name = data['sender_name']
@@ -131,7 +131,6 @@ def private_message(data):
         'body'          : body, 'sender_sid': sender_sid, 'sender_name': sender_name, 'timestamp': timestamp,
         'recipient_name': recipient_name, 'recipient_sid': recipient_sid
     }
-    print('Private message: ' + str(message))
     emit('Display private message', message, room=room, broadcast=True)
 
 
@@ -139,11 +138,10 @@ def private_message(data):
 def send_message(data):
     # Method to create new channel
     channel = data['channel']
-
     if channel not in open_channels:
         open_channels.append(channel)
         print('Channel created: ' + data['channel'])
-    print(open_channels)
+    print('Open channels: ' + str(open_channels))
     emit('Display channel link', {'channel': channel, 'open_channels': open_channels}, broadcast=True)
 
 

@@ -1,9 +1,5 @@
 Flask
 flask-socketio
-Flask-Session
-flask-login
-Flask-WTF
-wtforms
 flask-bootstrap
 datetime
 eventlet

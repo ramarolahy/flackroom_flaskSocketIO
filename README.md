@@ -7,6 +7,11 @@ channels between other users.
 
 # Outside resources
 + http://stewartpark.github.io/Flask-JSGlue/
++ https://pypi.org/project/Flask-JSGlue/
++ https://stackoverflow.com/
++ https://api.jquery.com/
++ https://getbootstrap.com/
++ https://semantic-ui.com/
 
 # Website Structure
 ```markdown
@@ -58,8 +63,9 @@ flackers = []
 See requirements.txt
 
 <h3>Other notes</h3>
-Local storage is used to store flackername and channels joined by the user, so using two different browsers for testing
++ Local storage is used to store flackername and channels joined by the user, so using two different browsers for testing
 is ideal (eg Chrome and Opera)
++
 
 
 

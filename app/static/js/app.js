@@ -137,8 +137,6 @@ $(document).ready(function () {
             displayFlacker(data);
             onclickflacker(data);
         }
-
-        console.log(flacker_sid);
     });
 
 
@@ -593,7 +591,6 @@ $(document).ready(function () {
      */
     const onclickflacker = (data) => {
         return $(`#flacker-${data.flacker_sid}-link`).unbind().click((evt) => {
-            console.log(flacker_sid);
             // get sender information to create private room tab on the originator side
             const recipient_sid = $(evt.currentTarget).attr('data-sid');
             const recipient_name = $(evt.currentTarget).attr('data-name');
