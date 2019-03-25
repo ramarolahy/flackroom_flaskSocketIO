@@ -127,7 +127,7 @@ button[id^=channel-link-]:hover {
 
 
 .channel-link__flash {
-    box-shadow: inset 0 0 12px orangered !important;
+    box-shadow: inset 0 0 20px orangered !important;
 }
 
 
@@ -228,6 +228,23 @@ div.tab-pane::-webkit-scrollbar {
     position: relative;
     background-color: rgba(5, 7, 13, 0.9);
     box-shadow: 0 0 80px black;
+}
+
+#wrap__flackers {
+    background-color: #161c1f;
+    height: auto;
+}
+
+span.flacker-link {
+    background-color: white !important;
+    color: #1c6d74 !important;
+    border-radius: 100px;
+    cursor: pointer;
+}
+
+span.flacker-link:hover {
+    background-color: #1c6d74 !important;
+    color: white !important;
 }
 
 #wrap__tabs-list {
@@ -349,6 +366,7 @@ i.fa-ellipsis-v {
     z-index: 0;
     position: relative;
     bottom: 0;
+    display: none;
 
 }
 

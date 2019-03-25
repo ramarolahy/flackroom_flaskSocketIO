@@ -13,14 +13,14 @@ server_timestamp = datetime.now().strftime("%H:%M, %m/%d/%Y")
 # global variable to store messages
 message_history = {
     '#main': [{
-                  'body': 'Welcome to flackroom!', 'sender_sid': 'falckbot001', 'sender_name': 'flackbot',
-                  'timestamp': server_timestamp, 'recipient_name': 'superflacker', 'channel': '#main'
-              }]
+        'body'     : 'Welcome to flackroom!', 'sender_sid': 'falckbot001', 'sender_name': 'flackbot',
+        'timestamp': server_timestamp, 'recipient_name': 'superflacker', 'channel': '#main'
+    }]
 }
 # Global variable to store channels
 open_channels = ['#main']
 # global variable to store active users
-flackers = []
+flackers = {}
 
 
 def is_empty(d):
@@ -31,12 +31,26 @@ def is_empty(d):
         return True
 
 
-@socketio.on('Register flacker')
-def get_flacker():
+@socketio.on('login_flacker')
+def get_flacker(data):
     # Method to Register flacker and respond with sid
-    flackers.append(request.sid)
+    flacker_name = data['flacker_name']
+    flacker_sid = request.sid
+    if flacker_name not in flackers:
+        flackers[flacker_name] = []
+    flacker = {'flacker_name': flacker_name, 'flacker_sid': flacker_sid}
+    # For this project, since Authentication is not a requirement, I will assume the user/tester
+    # will keep using the same username, and  just re-assign a new sid for each session
+    flackers[flacker_name] = flacker
     print(flackers)
-    emit('get_sid', request.sid)
+    emit('logged_in', flacker, broadcast=True)
+
+
+@socketio.on('logout_flacker')
+def on_login(data):
+    print('logout')
+    flacker_sid = data['flacker_sid']
+    emit('remove_user', {'flacker_sid': flacker_sid}, broadcast=True)
 
 
 @socketio.on('init_room')
@@ -46,7 +60,7 @@ def init_room(data):
     channels = data['open_channels']
     if not is_empty(open_channels):
         channels = open_channels
-    emit('load_channels', {'open_channels': channels})
+    emit('load_channels', {'open_channels': channels, 'current_flackers': flackers})
 
 
 @socketio.on('get_messages')
@@ -92,6 +106,21 @@ def send_message(data):
     emit('Display message', message, room=channel, broadcast=True)
 
 
+@socketio.on('get_recipient_sid')
+def get_sid(data):
+    recipient_name = data['recipient_name']
+    recipient_sid = flackers[recipient_name]['flacker_sid']
+    sender_name = data['sender_name']
+    sender_sid = data['sender_sid']
+    emit('start_private_message', {
+                'recipient_name': recipient_name,
+                'recipient_sid': recipient_sid,
+                'sender_name': sender_name,
+                'sender_sid': sender_sid
+            })
+
+
+
 @socketio.on('Private message')
 def private_message(data):
     # Method to send Private message to user
@@ -105,8 +134,9 @@ def private_message(data):
     timestamp = str(server_timestamp)
     join_room(recipient_sid)
     # Save message
-    message = {'body': body, 'sender_sid': sender_sid, 'sender_name': sender_name, 'timestamp': timestamp,
-               'recipient_name': recipient_name, 'recipient_sid': recipient_sid
+    message = {
+        'body'          : body, 'sender_sid': sender_sid, 'sender_name': sender_name, 'timestamp': timestamp,
+        'recipient_name': recipient_name, 'recipient_sid': recipient_sid
     }
     print('Private message: ' + str(message))
     emit('Display private message', message, room=recipient_sid, broadcast=True)

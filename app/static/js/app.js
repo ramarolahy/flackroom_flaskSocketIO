@@ -8,10 +8,6 @@ $(document).ready(function () {
      *  Method to update the local storage
      */
     const updateLocalStorage = function () {
-        //Initialize JSON object to store locally
-        // const jsonFile = {
-        //     last_session: session_data
-        // };
         // Update file in local storage
         const myLocalFile = JSON.stringify(session_data);
         window.localStorage.setItem('last_session', myLocalFile);
@@ -72,20 +68,27 @@ $(document).ready(function () {
      */
     function initFlackroom(flacker, last_active_channel = '#main', joined_channels) {
 
+
         /**
          * Receives message history from the server
          * initializes flackroom
          */
         socket.on('load_channels', data => {
-            //let storedChannels = Object.keys(data.messages);
-            console.log(data.open_channels);
             // load channel links. #main will be pre-loaded and disabled
             for (let i = 0; i < data.open_channels.length; i++) {
                 if (data.open_channels[i] !== '#main') {
                     joined_channels.includes(data.open_channels[i]) ? displayChannelBtn(data.open_channels[i], true) : displayChannelBtn(data.open_channels[i], false);
                 }
             }
-            
+            const current_flackers = Object.values(data.current_flackers);
+            current_flackers.forEach(flacker => {
+                if ($(`#flacker-${flacker.flacker_sid}-link`).length === 0) {
+                    displayFlacker(flacker);
+                    // Attach handler event for flacker private messaging
+                    onclickflacker(flacker);
+                }
+            })
+
         });
 
         /**
@@ -126,8 +129,26 @@ $(document).ready(function () {
      * Get the flacker's session id from the server
      * and store it client side
      */
-    socket.on('get_sid', data => {
-        flacker_sid = data;
+    socket.on('logged_in', data => {
+        if (data.flacker_name === current_flacker) {
+            flacker_sid = data.flacker_sid;
+        }
+        if ($(`#flacker-${data.flacker_sid}-link`).length === 0) {
+            displayFlacker(data);
+            onclickflacker(data);
+        }
+
+        console.log(flacker_sid);
+    });
+
+
+    socket.on('disconnect', () => {
+        socket.emit('logout_flacker', {'flacker_sid': flacker_sid})
+    });
+
+
+    socket.on('remove_user', data => {
+        $(`#wrap__flackers`).find($(`#flacker-${data.flacker_sid}-link`)).remove()
     });
 
     /**
@@ -161,12 +182,28 @@ $(document).ready(function () {
         if (($(`#list_messages-${channel}`).find($(`a[id^='flacker-']`))).length === 0) {
             // Load saved messages from the server.
             if (channels.includes(channel)) {
-                console.log('load messages');
                 for (let j = 0; j < data.messages[channel].length; j++) {
                     displayMessage(data.messages[channel][j]);
                 }
             }
         }
+    });
+
+    socket.on ('start_private_message', data => {
+        if ((flacker_sid !== data.recipient_sid) && ($(`#v-pills-${data.recipient_sid}`).length === 0)) {
+                // Display channel tab and panel
+                displayChannelRoom(data, false, true);
+                // Emit message to active channel
+                onclickSendPrivateMessage(flacker_sid, data.recipient_sid);
+                // Assign click event to leave channel button on render
+                onclickLeaveChannel(data.recipient_sid, data.sender_name, true);
+                // Set tab to active
+                $('a.nav-link').removeClass('active');
+                $(`#v-pills-${data.recipient_sid}-tab`).addClass('active');
+                // Set panel to show and active
+                $('div.tab-pane.fade').removeClass('show active');
+                $(`#v-pills-${data.recipient_sid}`).addClass('show active');
+            }
     });
 
     /**
@@ -280,6 +317,16 @@ $(document).ready(function () {
      /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 //   ~~~~~~  DISPLAY HANDLERS  ~~~~~~ //
+
+    const displayFlacker = data => {
+        if ($(`a[data-name^=${data.flacker_name}]`).length === 0) {
+            $(`#wrap__flackers`).append(`
+        <a id="flacker-${data.flacker_sid}-link" class="flacker" data-sid=${data.flacker_sid} data-name=${data.flacker_name}><span class="flacker-link px-2 mr-3">@${data.flacker_name}</span></a>
+        `);
+        }
+
+
+    };
     /**
      * Method to display message
      * @param data: object or string
@@ -314,10 +361,8 @@ $(document).ready(function () {
                         </div>
                     </div>
                 </div>
-                    `)
+                    `);
         }
-        // Attach handler event for flacker private messaging
-        onclickflacker(data)
     };
 
     /**
@@ -382,7 +427,7 @@ $(document).ready(function () {
                      aria-labelledby="v-pills-${channel}-tab">
                     <div class="wrap__channel-info">
                         <h3 id="channelName-${channel}">${isPrivate ? '@' + displayName : '#' + channel}</h3>
-                        ${(channel !== 'main') ? `<button id="leave-channel-${channel}" data-channel=${channel}>${isPrivate ? 'Later ' + displayName + '! :)' : 'leave ' + channel}</button>` : ''}
+                        ${(channel !== 'main') ? `<button id="leave-channel-${channel}" data-channel=${channel}>${isPrivate ? 'Later @' + displayName + '! :)' : 'leave #' + channel}</button>` : ''}
                     </div>
                     <div id="list_messages-${channel}" class="ui comments">
                          
@@ -416,13 +461,14 @@ $(document).ready(function () {
                     current_flacker = $('#flackername').val();
 
                     // Call init_room function from server
-                    socket.emit('init_room', {'open_channels': ''});
+                    socket.emit('init_room', {'open_channels': '', 'current_flackers': []});
+
                     // Log the user on the server
-                    socket.emit('Register flacker');
+                    socket.emit('login_flacker', {'flacker_name': current_flacker, 'flacker_sid': ''});
                     // Initiate the chat app
                     $('#current_flacker').html(`@${current_flacker}`);
                     $('#JoinPanel').remove();
-                    $('#ChannelPanel').css('z-index', '0');
+                    $('#ChannelPanel').css('z-index', '0').css('display', 'block');
                     $('#overlay').slideUp(325);
 
                     // Update database
@@ -433,6 +479,7 @@ $(document).ready(function () {
                 initFlackroom(session_data.myFlackername,
                     session_data.last_active_channel,
                     session_data.joined_channels);
+
 
             }
         );
@@ -544,32 +591,19 @@ $(document).ready(function () {
      * @returns {*|jQuery}
      */
     const onclickflacker = (data) => {
-        let flacker = data.recipient_sid;
-        return $(`#flacker-${data.sender_sid}`).unbind().click((evt) => {
+        return $(`#flacker-${data.flacker_sid}-link`).unbind().click((evt) => {
+            console.log(flacker_sid);
             // get sender information to create private room tab on the originator side
             const recipient_sid = $(evt.currentTarget).attr('data-sid');
             const recipient_name = $(evt.currentTarget).attr('data-name');
             // save it an object to pass into displayChannelRoom()
-            const recipient = {
+            socket.emit('get_recipient_sid',{
                 'recipient_name': recipient_name,
                 'recipient_sid': recipient_sid,
+                'sender_name': current_flacker,
                 'sender_sid': flacker_sid
-            };
+            });
 
-            if ((recipient_sid !== flacker_sid) && ($(`#v-pills-${flacker}`).length === 0)) {
-                // Display channel tab and panel
-                displayChannelRoom(recipient, false, true);
-                // Emit message to active channel
-                onclickSendPrivateMessage(flacker_sid, recipient_sid);
-                // Assign click event to leave channel button on render
-                onclickLeaveChannel(recipient_sid, data.sender_name, true);
-                // Set tab to active
-                $('a.nav-link').removeClass('active');
-                $(`#v-pills-${recipient_sid}-tab`).addClass('active');
-                // Set panel to show and active
-                $('div.tab-pane.fade').removeClass('show active');
-                $(`#v-pills-${recipient_sid}`).addClass('show active');
-            }
         });
     };
 
@@ -642,6 +676,7 @@ $(document).ready(function () {
     $(inputFields).blur(() => {
         $('.input-group-text').css('border-color', 'white')
     });
+
 
 // =========================================
 

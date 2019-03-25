@@ -48,13 +48,18 @@ open_channels = []
 flackers = []
 
 <h3>Personal Touch</h3>
-Private channel between two users
++ Private channel between two users
++ Remembering all open channels in the flackroom
++ Remembering all channels the user joined
++ A great design and UI/UX
++ An awesome Flack logo
 
 <h3>Packages used</h3>
 See requirements.txt
 
 <h3>Other notes</h3>
+Local storage is used to store flackername and channels joined by the user, so using two different browsers for testing
+is ideal (eg Chrome and Opera)
 
-Please use **Chrome**, **Safari**, or **Opera** for best display performance.
 
 
