@@ -1,17 +1,10 @@
-# Project 2
+# Flackroom
 + By: Mbinintsoa 'Ram' Ramarolahy
 
 # Website description
 Flack is a chatroom where users can have live chatting, open and join channels, start private
 channels between other users.
 
-# Outside resources
-+ http://stewartpark.github.io/Flask-JSGlue/
-+ https://pypi.org/project/Flask-JSGlue/
-+ https://stackoverflow.com/
-+ https://api.jquery.com/
-+ https://getbootstrap.com/
-+ https://semantic-ui.com/
 
 # Website Structure
 ```markdown
@@ -46,18 +39,6 @@ project1-ramarolahy
 ├── requirements.txt
 └── run.py
 ```
-
-<h3>Global variables</h3>
-message_history = {}
-open_channels = []
-flackers = []
-
-<h3>Personal Touch</h3>
-+ Private channel between two users
-+ Remembering all open channels in the flackroom
-+ Remembering all channels the user joined
-+ A great design and UI/UX
-+ An awesome Flack logo
 
 <h3>Packages used</h3>
 See requirements.txt
